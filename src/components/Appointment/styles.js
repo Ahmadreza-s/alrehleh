@@ -1,0 +1,133 @@
+import { makeStyles } from '@mui/styles';
+
+export default makeStyles((theme) => ({
+  appointmentContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1.5),
+    overflow: 'hidden',
+  },
+  appointmentSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1.5),
+    direction: 'rtl',
+  },
+  appointmentTitle: {
+    fontSize: '0.75rem !important',
+    color: '#717171 !important',
+    fontWeight: 'bold !important',
+  },
+  appointmentOptions: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1),
+  },
+  appointmentBox: {
+    borderRadius: '12px',
+    border: '1px solid #EDEDED',
+    padding: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing(1.5),
+  },
+  appointmentBoxContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+    flex: 1,
+  },
+  appointmentBoxTitle: {
+    fontSize: '0.75rem !important',
+    color: '#3b3b3b !important',
+    fontWeight: 'bold !important',
+  },
+  appointmentBoxDetails: {
+    fontSize: '0.75rem !important',
+    color: '#7b7b7b !important',
+  },
+  appointmentCheckIcon: {
+    width: '28px',
+    height: '28px',
+    flexShrink: 0,
+  },
+  appointmentEmptyCircle: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    border: '2px solid #EDEDED',
+    flexShrink: 0,
+  },
+  daysSection: {
+    direction: 'rtl',
+    opacity: 0,
+    transform: 'translateY(-20px)',
+    transition: 'opacity 0.5s ease-out, transform 0.5s ease-out, max-height 0.5s ease-out',
+    maxHeight: 0,
+    overflow: 'hidden',
+    marginTop: 0,
+    maxWidth: '460px',
+  },
+  daysSectionVisible: {
+    opacity: 1,
+    transform: 'translateY(0)',
+    maxHeight: '150px',
+    marginTop: theme.spacing(1.5),
+    overflow: 'visible',
+  },
+  daysList: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: theme.spacing(1),
+    overflowX: 'auto',
+    overflowY: 'hidden',
+    paddingBottom: theme.spacing(1),
+    '&::-webkit-scrollbar': {
+      height: 4,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: 'transparent',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: 'rgba(0, 0, 0, 0.2)',
+      borderRadius: 2,
+    },
+  },
+  dayCard: {
+    width: '60px',
+    height: '80px',
+    borderRadius: '12px',
+    border: '1px solid #E0E0E0',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '2px',
+    flexShrink: 0,
+    padding: theme.spacing(0.5),
+    transition: 'all 0.2s ease',
+  },
+  dayCardSelected: {
+    borderColor: '#8B0EA1 !important',
+    borderWidth: '1px',
+    backgroundColor: '#F8E9FB',
+  },
+  dayCardDayName: {
+    fontSize: '0.75rem !important',
+    color: '#7b7b7b !important',
+    textAlign: 'center',
+  },
+  dayCardDate: {
+    fontWeight: 'bold !important',
+    fontSize: '1.5rem !important',
+    color: '#3b3b3b !important',
+    textAlign: 'center',
+    lineHeight: 1.2,
+  },
+  dayCardMonth: {
+    fontSize: '0.75rem !important',
+    color: '#7b7b7b !important',
+    textAlign: 'center',
+  },
+}));

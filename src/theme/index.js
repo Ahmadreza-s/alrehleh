@@ -2,14 +2,29 @@ import { createTheme } from '@mui/material/styles';
 import { faIR } from '@mui/material/locale';
 import IRANSansXFaNumRegular from '@/assets/fonts/IRANSansXFaNum-Regular.ttf';
 
+const BRAND_PRIMARY = '#0b6efd';
+const BRAND_SECONDARY = '#6c757d';
+const BRAND_ERROR = '#d32f2f';
+const BRAND_BACKGROUND_DEFAULT = '#fafafa';
+const BRAND_BACKGROUND_PAPER = '#ffffff';
+
+const HEADER_BG = '#21004B';
+const HEADER_TEXT = '#ffffff';
+const MAIN_HEADER_GRADIENT = 'linear-gradient(90deg, #9810AD 0%, #660D86 31%, #2C0067 100%)';
+const MAIN_HEADER_TEXT = '#FFFFFF';
+
 // Single, app-wide theme (no light/dark switching)
 const theme = createTheme(
 	{
 		palette: {
-			primary: { main: '#0b6efd' },
-			secondary: { main: '#6c757d' },
-			error: { main: '#d32f2f' },
-			background: { default: '#fafafa', paper: '#ffffff' },
+			primary: { main: BRAND_PRIMARY },
+			secondary: { main: BRAND_SECONDARY },
+			error: { main: BRAND_ERROR },
+			background: { default: BRAND_BACKGROUND_DEFAULT, paper: BRAND_BACKGROUND_PAPER },
+			brand: {
+				main: HEADER_BG,
+				contrastText: HEADER_TEXT,
+			},
 		},
 		typography: {
 			fontFamily:
@@ -30,6 +45,13 @@ const theme = createTheme(
 					}
 				`,
 			},
+			MuiPaper: {
+				styleOverrides: {
+					root: {
+						boxShadow: 'none !important',
+					},
+				},
+			},
 			MuiButton: {
 				styleOverrides: {
 					root: {
@@ -42,10 +64,31 @@ const theme = createTheme(
 					color: 'primary',
 				},
 			},
+			MuiTypography: {
+				styleOverrides: {
+					root: {
+						direction: 'rtl !important',
+					},
+				},
+			},
 			MuiContainer: {
 				defaultProps: {
-					maxWidth: 'md',
+					maxWidth: 'xl',
 				},
+			},
+		},
+		custom: {
+			headerInfo: {
+				background: HEADER_BG,
+				text: HEADER_TEXT,
+				iconSize: 22,
+				gap: 2,
+			},
+			mainHeader: {
+				background: MAIN_HEADER_GRADIENT,
+				text: MAIN_HEADER_TEXT,
+				dividerColor: 'rgba(255, 255, 255, 0.4)',
+				flagGap: 1,
 			},
 		},
 	},
