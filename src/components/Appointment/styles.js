@@ -4,7 +4,7 @@ export default makeStyles((theme) => ({
   appointmentContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(1.5),
+    gap: theme.spacing(0.5),
     overflow: 'hidden',
   },
   appointmentSection: {
@@ -68,6 +68,7 @@ export default makeStyles((theme) => ({
     overflow: 'hidden',
     marginTop: 0,
     maxWidth: '460px',
+    marginLeft: 'auto',
   },
   daysSectionVisible: {
     opacity: 1,
@@ -113,6 +114,10 @@ export default makeStyles((theme) => ({
     borderWidth: '1px',
     backgroundColor: '#F8E9FB',
   },
+  dayCardDisabled: {
+    cursor: 'not-allowed !important',
+    opacity: 0.5,
+  },
   dayCardDayName: {
     fontSize: '0.75rem !important',
     color: '#7b7b7b !important',
@@ -129,5 +134,82 @@ export default makeStyles((theme) => ({
     fontSize: '0.75rem !important',
     color: '#7b7b7b !important',
     textAlign: 'center',
+  },
+  timeSection: {
+    direction: 'rtl',
+    marginTop: theme.spacing(1.5),
+    width: '100%',
+  },
+  timeTabs: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: theme.spacing(1),
+    marginBottom: theme.spacing(1.5),
+  },
+  timeTab: {
+    flex: 1,
+    padding: theme.spacing(1),
+    border: 'none',
+    textAlign: 'center',
+    transition: 'all 0.2s ease',
+    position: 'relative',
+  },
+  timeTabActive: {
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: '3px',
+      backgroundColor: '#8B0EA1',
+      borderRadius: '0 0 8px 8px',
+    },
+  },
+  timeTabText: {
+    fontSize: '0.875rem !important',
+    color: '#3B3B3B !important',
+    fontWeight: 'bold !important',
+  },
+  timeSlotsContainer: {
+    width: '100%',
+  },
+  timeSlotsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: theme.spacing(1),
+    direction: 'rtl',
+  },
+  timeSlot: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderRadius: 8,
+    color: '#3B3B3B',
+    background: '#fff',
+    borderColor: '#E0E0E0',
+    fontWeight: 'bold',
+    fontSize: 14,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    transition: 'all 0.2s ease',
+    cursor: 'pointer',
+  },
+  timeSlotActive: {
+    background: '#F8E9FB',
+    borderColor: '#8B0EA1',
+  },
+  timeSlotDisabled: {
+    cursor: 'not-allowed !important',
+    opacity: 0.5,
+  },
+  timeSlotText: {
+    fontSize: '0.875rem !important',
+    color: '#3B3B3B !important',
+    fontWeight: 'bold !important',
+  },
+  submitButtonContainer: {
+    marginTop: theme.spacing(2),
+    width: '100%',
+    direction: 'rtl',
   },
 }));

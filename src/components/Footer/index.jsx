@@ -6,6 +6,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import Divider from '@mui/material/Divider';
+import CircularProgress from '@mui/material/CircularProgress';
+import { saveNewsletterSubscription } from '@/utils/firebase';
 import { useStyles } from './styles.js';
 
 import youtubeIcon from '@/assets/images/icons/youtube.svg';
@@ -19,13 +21,56 @@ import logoColored from '@/assets/images/icons/logo-colored.png';
 const Footer = () => {
   const classes = useStyles();
   const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
-  const handleEmailSubmit = (e) => {
+  // تابع اعتبارسنجی ایمیل
+  const validateEmail = (email) => {
+    if (!email.trim()) {
+      return 'هذا الحقل إجباري';
+    }
+    // بررسی فرمت ایمیل
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'البريد الإلكتروني غير صحيح';
+    }
+    // حداکثر 50 کاراکتر
+    if (email.length > 50) {
+      return 'البريد الإلكتروني يجب أن يكون أقل من 50 حرف';
+    }
+    return '';
+  };
+
+  const handleEmailSubmit = async (e) => {
     e.preventDefault();
-    if (email.trim()) {
-      // TODO: Handle newsletter subscription
-      console.log('Email submitted:', email);
+    
+    // پاک کردن خطا و موفقیت قبلی
+    setError('');
+    setSuccess(false);
+    
+    // اعتبارسنجی ایمیل
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      await saveNewsletterSubscription(email.trim());
+      setSuccess(true);
       setEmail('');
+      // بعد از 3 ثانیه پیام موفقیت را پاک کن
+      setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error subscribing to newsletter:', error);
+      setError('حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -91,13 +136,30 @@ const Footer = () => {
                 type="email"
                 placeholder="أدخل بريدك الإلكتروني"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  // پاک کردن خطا وقتی کاربر شروع به تایپ می‌کند
+                  if (error) {
+                    setError('');
+                  }
+                  if (success) {
+                    setSuccess(false);
+                  }
+                }}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === 'Enter' && !isSubmitting) {
                     handleEmailSubmit(e);
                   }
                 }}
                 className={classes.emailInput}
+                error={!!error}
+                helperText={error || (success ? 'تم التسجيل بنجاح!' : '')}
+                FormHelperTextProps={{
+                  sx: {
+                    textAlign: 'right',
+                    color: success ? '#4caf50' : undefined,
+                  },
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -105,9 +167,10 @@ const Footer = () => {
                         variant="contained"
                         onClick={handleEmailSubmit}
                         className={classes.subscribeButton}
-                        disabled={!email.trim()}
+                        disabled={!email.trim() || isSubmitting}
+                        startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : null}
                       >
-                        تسجیل
+                        {isSubmitting ? 'جاري التسجيل...' : 'تسجیل'}
                       </Button>
                     </InputAdornment>
                   ),

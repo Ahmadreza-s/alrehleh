@@ -8,6 +8,7 @@ import instagramIcon from '@/assets/images/icons/instagram.svg';
 import facebookIcon from '@/assets/images/icons/facebook.svg';
 import whatsappIcon from '@/assets/images/icons/whatsapp.svg';
 import locationIcon from '@/assets/images/icons/location.svg';
+import { trackEvent, ANALYTICS_EVENTS } from '@/utils/analytics';
 
 import useStyles from './styles.js';
 
@@ -18,15 +19,49 @@ export default function HeaderInfo() {
     <Box component="header" className={classes.root}>
       <Container className={classes.container}>
         <Box className={classes.socialGroup}>
-          <Box component="img" src={youtubeIcon} alt="YouTube" className={classes.socialIcon} />
-          <Box component="img" src={instagramIcon} alt="Instagram" className={classes.socialIcon} />
-          <Box component="img" src={facebookIcon} alt="Facebook" className={classes.socialIcon} />
+          <Box
+            component="a"
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              trackEvent(ANALYTICS_EVENTS.CLICK_YOUTUBE_HEADER);
+            }}
+            className={classes.socialIcon}
+            style={{ cursor: 'pointer' }}
+          >
+            <Box component="img" src={youtubeIcon} alt="YouTube" className={classes.socialIcon} />
+          </Box>
+          <Box
+            component="a"
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              trackEvent(ANALYTICS_EVENTS.CLICK_INSTAGRAM_HEADER);
+            }}
+            className={classes.socialIcon}
+            style={{ cursor: 'pointer' }}
+          >
+            <Box component="img" src={instagramIcon} alt="Instagram" className={classes.socialIcon} />
+          </Box>
+          <Box
+            component="a"
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              trackEvent(ANALYTICS_EVENTS.CLICK_FACEBOOK_HEADER);
+            }}
+            className={classes.socialIcon}
+            style={{ cursor: 'pointer' }}
+          >
+            <Box component="img" src={facebookIcon} alt="Facebook" className={classes.socialIcon} />
+          </Box>
           <Box
             component="a"
             href="http://wa.me/989125056029"
             target="_blank"
             rel="noopener noreferrer"
             className={classes.whatsappLink}
+            onClick={() => trackEvent(ANALYTICS_EVENTS.CLICK_WHATSAPP_HEADER)}
           >
             <Box component="img" src={whatsappIcon} alt="WhatsApp" className={classes.socialIcon} />
             <Typography variant="body2" className={classes.whatsappText}>

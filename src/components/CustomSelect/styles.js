@@ -1,4 +1,4 @@
-import { makeStyles } from '@/utils/makeStyles.js';
+import { makeStyles } from '@mui/styles';
 
 export default makeStyles((theme) => ({
   selectWrapper: {

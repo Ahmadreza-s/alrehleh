@@ -1,4 +1,3 @@
-import React from 'react';
 import Select from 'react-select';
 import { components } from 'react-select';
 import { Box } from '@mui/material';
@@ -20,7 +19,6 @@ const DropdownIndicator = (props) => {
 const Control = ({ children, ...props }) => {
   const classes = useStyles();
   const { icon } = props.selectProps;
-  console.log('props', props);
 
   return (
     <components.Control {...props}>

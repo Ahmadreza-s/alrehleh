@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { trackEvent, ANALYTICS_EVENTS } from '@/utils/analytics';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -8,14 +10,13 @@ import locationColoredIcon from '@/assets/images/icons/location-colored.svg';
 import { PaymentItems } from '@/constants/paymentItems';
 import { cities } from '@/constants/cities';
 import { doctors } from '@/constants/doctors';
-import { useStyles } from './Home.styles.js';
+import { useStyles } from './styles';
 import CommentSection from '@/components/CommentSection';
 import MapSection from '@/components/MapSection';
 import Footer from '@/components/Footer';
 import CustomSelect from '@/components/CustomSelect';
 import Appointment from '@/components/Appointment';
 import monitorIcon from '@/assets/images/icons/monitor.png';
-import miladHospitalImage from '@/assets/images/hospitals/milad.png';
 import translateIcon from '@/assets/images/icons/translate.png';
 import callBlackIcon from '@/assets/images/icons/call-black.png';
 import userTickIcon from '@/assets/images/icons/user-tick.png';
@@ -23,6 +24,8 @@ import tickCircleIcon from '@/assets/images/icons/tick-circle.png';
 
 export default function Home() {
   const classes = useStyles();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const cityOptions = cities.map((city) => ({
     value: city,
@@ -40,10 +43,47 @@ export default function Home() {
   const [selectedCity, setSelectedCity] = useState(cityOptions[0]);
   const [selectedSpeciality, setSelectedSpeciality] = useState(specialityOptions[0]);
 
+  // Track page view - فقط اگر از Dialog نیامده باشد
+  useEffect(() => {
+    // اگر از Dialog آمده باشد، location.state.skipHomePageTracking وجود دارد
+    if (!location.state?.skipHomePageTracking) {
+      trackEvent(ANALYTICS_EVENTS.VIEW_HOME_PAGE);
+    }
+  }, [location.state]);
+
+  // تابع scrollToTop با انیمیشن
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  // مدیریت تغییرات appointment و ارسال به booking
+  const handleAppointmentChange = (data, isSubmit = false) => {
+    
+    if (isSubmit && data) {
+      // Scroll to top با انیمیشن
+      scrollToTop();
+      
+      // کمی تاخیر برای نمایش انیمیشن scroll
+      setTimeout(() => {
+        // ارسال اطلاعات به صفحه booking
+        navigate('/booking', {
+          state: {
+            city: selectedCity.value,
+            speciality: selectedSpeciality.value,
+            appointment: data,
+          },
+        });
+      }, 200);
+    }
+  };
+
   return (
     <Box>
       <Box className={classes.paymentSection}>
-        {PaymentItems.map((item, index) => (
+        {PaymentItems.slice(0, 6).map((item, index) => (
           <Box
             key={index}
             component="img"
@@ -61,7 +101,12 @@ export default function Home() {
                 <CustomSelect
                   options={specialityOptions}
                   value={selectedSpeciality}
-                  onChange={(selected) => setSelectedSpeciality(selected)}
+                  onChange={(selected) => {
+                    setSelectedSpeciality(selected);
+                    trackEvent(ANALYTICS_EVENTS.CLICK_SPECIALITY_CHANGE, {
+                      speciality: selected.value,
+                    });
+                  }}
                   placeholder="انتخاب التخصص..."
                   icon={monitorIcon}
                 />
@@ -71,7 +116,12 @@ export default function Home() {
                 <CustomSelect
                   options={cityOptions}
                   value={selectedCity}
-                  onChange={(selected) => setSelectedCity(selected)}
+                  onChange={(selected) => {
+                    setSelectedCity(selected);
+                    trackEvent(ANALYTICS_EVENTS.CLICK_CITY_CHANGE, {
+                      city: selected.value.name,
+                    });
+                  }}
                   placeholder="انتخاب المدينة..."
                   icon={locationColoredIcon}
                 />
@@ -85,7 +135,7 @@ export default function Home() {
                 <Box className={classes.hospitalInfoColumn}>
                   <Box
                     component="img"
-                    src={miladHospitalImage}
+                    src={selectedCity.value.image}
                     alt="عکس بیمارستان"
                     className={classes.hospitalImage}
                   />
@@ -180,6 +230,7 @@ export default function Home() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={classes.whatsappBox}
+                    onClick={() => trackEvent(ANALYTICS_EVENTS.CLICK_WHATSAPP_HOSPITAL_CARD)}
                   >
                     <Box
                       component="img"
@@ -187,8 +238,8 @@ export default function Home() {
                       alt="واتساپ"
                       className={classes.whatsappIcon}
                     />
-                    <Typography variant="body2" className={classes.whatsappNumber}>
-                      0098 912 505 6099
+                    <Typography variant="body2"  className={classes.whatsappNumber}>
+                      <span dir="ltr">0098 912 505 6099</span>
                     </Typography>
                   </Box>
                 </Box>
@@ -217,7 +268,7 @@ export default function Home() {
             </Paper>
 
             {/* بخش انتخاب موعد */}
-            <Appointment />
+            <Appointment onAppointmentChange={handleAppointmentChange} />
           </Box>
 
           <MapSection selectedCity={selectedCity} />
@@ -230,3 +281,4 @@ export default function Home() {
     </Box>
   );
 }
+

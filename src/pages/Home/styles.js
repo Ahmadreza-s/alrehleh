@@ -67,7 +67,7 @@ export const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: theme.spacing(2),
+    gap: theme.spacing(1.25),
     flex: 1,
   },
   hospitalImage: {
@@ -186,7 +186,7 @@ export const useStyles = makeStyles((theme) => ({
   whatsappNumber: {
     fontSize: '12px !important',
     color: '#292D32 !important',
-    direction: 'ltr',
+    direction: 'ltr !important',
     whiteSpace: 'nowrap',
   },
   whatsappAvatar: {

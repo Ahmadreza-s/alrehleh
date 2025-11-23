@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import CloseIcon from '@mui/icons-material/Close';
 import bannerImage from '@/assets/images/banner.png';
 import { cities } from '@/constants/cities';
+import { trackEvent, ANALYTICS_EVENTS } from '@/utils/analytics';
 import { useStyles, mapLabelStyles } from './styles.js';
 
 // Fix for default marker icon in react-leaflet
@@ -100,7 +101,10 @@ const MapSection = ({ selectedCity }) => {
           <Box className={classes.bannerWrapper}>
             <IconButton
               className={classes.bannerCloseButton}
-              onClick={() => setShowBanner(false)}
+              onClick={() => {
+                setShowBanner(false);
+                trackEvent(ANALYTICS_EVENTS.CLICK_CLOSE_MAP_BANNER);
+              }}
               size="small"
             >
               <CloseIcon />
