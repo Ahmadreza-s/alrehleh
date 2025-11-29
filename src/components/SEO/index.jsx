@@ -4,14 +4,7 @@ import { useLocation } from 'react-router-dom';
 /**
  * SEO Component for managing dynamic meta tags
  */
-export default function SEO({
-  title,
-  description,
-  keywords,
-  image,
-  url,
-  type = 'website',
-}) {
+export default function SEO({ title, description, keywords, image, url, type = 'website' }) {
   const location = useLocation();
   const baseUrl = 'https://alrehleh.web.app';
   const currentUrl = url || `${baseUrl}${location.pathname}`;
@@ -27,9 +20,7 @@ export default function SEO({
     const updateMetaTag = (property, content, isProperty = false) => {
       if (!content) return;
 
-      const selector = isProperty
-        ? `meta[property="${property}"]`
-        : `meta[name="${property}"]`;
+      const selector = isProperty ? `meta[property="${property}"]` : `meta[name="${property}"]`;
       let element = document.querySelector(selector);
 
       if (!element) {
@@ -81,4 +72,3 @@ export default function SEO({
 
   return null;
 }
-
