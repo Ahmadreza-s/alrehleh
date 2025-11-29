@@ -125,7 +125,7 @@ export default function Home() {
     name: 'رحلة الشفا',
     alternateName: 'Alrehleh',
     url: 'https://alrehleh.web.app',
-    logo: 'https://alrehleh.web.app/src/assets/images/icons/logo-colored.png',
+    logo: 'https://alrehleh.web.app/og-image.png',
     description:
       'منصة متخصصة في تنظيم الرحلات العلاجية إلى إيران، تهدف إلى تسهيل حصول المرضى من العراق على أفضل الخدمات الطبية',
     address: {

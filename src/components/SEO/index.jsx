@@ -15,7 +15,7 @@ export default function SEO({
   const location = useLocation();
   const baseUrl = 'https://alrehleh.web.app';
   const currentUrl = url || `${baseUrl}${location.pathname}`;
-  const defaultImage = `${baseUrl}/src/assets/images/icons/logo-colored.png`;
+  const defaultImage = `${baseUrl}/og-image.png`;
 
   useEffect(() => {
     // Update document title
