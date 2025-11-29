@@ -74,7 +74,7 @@ export const useStyles = makeStyles((theme) => ({
     fontSize: '0.9rem !important',
     textAlign: 'right !important',
     direction: 'rtl !important',
-    lineHeight: 1.6,
+    lineHeight: '1.6 !important',
   },
   newsletterSection: {
     width: '100%',
@@ -110,11 +110,10 @@ export const useStyles = makeStyles((theme) => ({
   },
   companyDescription: {
     color: '#21004B',
-    lineHeight: 1.8,
+    lineHeight: '1.6 !important',
     textAlign: 'right',
     direction: 'rtl',
-    fontSize: '0.9rem',
-    fontWeight: 'bold !important',
+    fontSize: '0.9rem !important',
   },
   copyrightSection: {
     display: 'flex',

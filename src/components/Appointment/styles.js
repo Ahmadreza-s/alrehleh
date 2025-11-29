@@ -212,4 +212,30 @@ export default makeStyles((theme) => ({
     width: '100%',
     direction: 'rtl',
   },
+  submitButtonFixed: {
+    display: 'none',
+    [theme.breakpoints.down('sm')]: {
+      display: 'block',
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      padding: theme.spacing(2),
+      backgroundColor: '#fff',
+      boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.1)',
+      zIndex: 1000,
+      direction: 'rtl',
+      maxWidth: '100vw',
+      boxSizing: 'border-box',
+      animation: '$slideUp 0.3s ease-out',
+    },
+  },
+  '@keyframes slideUp': {
+    from: {
+      transform: 'translateY(100%)',
+    },
+    to: {
+      transform: 'translateY(0)',
+    },
+  },
 }));

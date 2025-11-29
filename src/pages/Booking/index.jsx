@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import { useTheme, useMediaQuery } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -31,8 +32,15 @@ export default function Booking() {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { city, speciality, appointment } = location.state || {};
+
+  // Refs و state برای sticky button
+  const buttonRef = useRef(null);
+  const buttonOriginalBottomRef = useRef(0);
+  const [isButtonSticky, setIsButtonSticky] = useState(false);
 
   // State برای فرم
   const [formData, setFormData] = useState({
@@ -63,6 +71,9 @@ export default function Booking() {
   const [selectedPayment, setSelectedPayment] = useState(PaymentItems[0]);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const buttonLoadingTimeoutRef = useRef(null);
+  const isFirstPaymentSelection = useRef(true);
 
   // پیدا کردن دکتر بر اساس تخصص
   const selectedDoctor = useMemo(() => {
@@ -78,7 +89,7 @@ export default function Booking() {
   useEffect(() => {
     // Track page view
     trackEvent(ANALYTICS_EVENTS.VIEW_BOOKING_PAGE);
-    
+
     // Scroll to top با انیمیشن وقتی صفحه لود می‌شود
     setTimeout(() => {
       window.scrollTo({
@@ -86,15 +97,119 @@ export default function Booking() {
         behavior: 'smooth',
       });
     }, 100);
-    
+
     // اگر اطلاعات وجود نداشت، به صفحه خانه redirect کن
-    if (!location.state || !location.state.city || !location.state.speciality || !location.state.appointment) {
+    if (
+      !location.state ||
+      !location.state.city ||
+      !location.state.speciality ||
+      !location.state.appointment
+    ) {
       navigate('/');
     }
   }, [location.state, navigate]);
 
+  // مدیریت sticky button برای موبایل
+  useEffect(() => {
+    if (!isMobile || !buttonRef.current) return;
+
+    const buttonElement = buttonRef.current;
+
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const currentScrollBottom = scrollTop + window.innerHeight;
+      const rect = buttonElement.getBoundingClientRect();
+
+      // اگر دکمه در viewport است
+      if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+        // موقعیت اصلی را به‌روزرسانی کن
+        buttonOriginalBottomRef.current = rect.bottom + scrollTop;
+        setIsButtonSticky(false);
+        return;
+      }
+
+      // اگر دکمه از بالا خارج شده (از بالای صفحه رد شده)
+      if (rect.bottom < 0) {
+        setIsButtonSticky(false);
+        return;
+      }
+
+      // اگر دکمه از پایین viewport خارج شده
+      if (rect.top > window.innerHeight) {
+        // بررسی کن آیا از محل اصلی دکمه به پایین گذشته‌ایم
+        if (currentScrollBottom >= buttonOriginalBottomRef.current) {
+          // از محل اصلی دکمه گذشته‌ایم -> sticky نشود
+          setIsButtonSticky(false);
+        } else {
+          // هنوز به محل دکمه نرسیده‌ایم -> sticky شود
+          setIsButtonSticky(true);
+        }
+      }
+    };
+
+    // IntersectionObserver برای تشخیص سریع‌تر
+    const observer = new IntersectionObserver(
+      () => {
+        handleScroll();
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0,
+      },
+    );
+
+    observer.observe(buttonElement);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // یکبار برای تنظیم موقعیت اولیه
+    const initialRect = buttonElement.getBoundingClientRect();
+    const initialScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    buttonOriginalBottomRef.current = initialRect.bottom + initialScrollTop;
+    handleScroll();
+
+    return () => {
+      observer.unobserve(buttonElement);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isMobile]);
+
+  // مدیریت loading دکمه وقتی payment method تغییر می‌کند
+  useEffect(() => {
+    // Skip اولین انتخاب
+    if (isFirstPaymentSelection.current) {
+      isFirstPaymentSelection.current = false;
+      return;
+    }
+
+    // Clear timeout قبلی اگر وجود داشته باشد
+    if (buttonLoadingTimeoutRef.current) {
+      clearTimeout(buttonLoadingTimeoutRef.current);
+    }
+
+    // فعال کردن loading
+    setIsButtonLoading(true);
+
+    // بعد از 1 ثانیه loading را تمام کن
+    buttonLoadingTimeoutRef.current = setTimeout(() => {
+      setIsButtonLoading(false);
+    }, 1000);
+
+    // Cleanup
+    return () => {
+      if (buttonLoadingTimeoutRef.current) {
+        clearTimeout(buttonLoadingTimeoutRef.current);
+      }
+    };
+  }, [selectedPayment]);
+
   // اگر اطلاعات وجود نداشت، چیزی نمایش نده
-  if (!location.state || !location.state.city || !location.state.speciality || !location.state.appointment) {
+  if (
+    !location.state ||
+    !location.state.city ||
+    !location.state.speciality ||
+    !location.state.appointment
+  ) {
     return null;
   }
 
@@ -108,7 +223,7 @@ export default function Booking() {
   const formatAppointmentDateTime = (withLabel = true) => {
     let day, monthName, year, time;
     let date;
-    
+
     if (appointment.type === 'today') {
       if (appointment.isTomorrow) {
         date = new Date();
@@ -193,7 +308,7 @@ export default function Booking() {
   const handleSubmit = async () => {
     // اگر در حال submit هستیم، از اجرای مجدد جلوگیری کن
     if (isSubmitting) return;
-    
+
     const newErrors = {
       fullName: '',
       phone: '',
@@ -271,7 +386,7 @@ export default function Booking() {
     // اگر خطایی وجود نداشت، اطلاعات را در Firebase ذخیره کن
     if (!hasError) {
       setIsSubmitting(true);
-      
+
       const bookingData = {
         name: formData.fullName,
         hospitalName: city.hospital,
@@ -285,7 +400,7 @@ export default function Booking() {
         passport: formData.passport || '',
         gender: formData.gender,
       };
-      
+
       try {
         const bookingId = await saveBooking(bookingData);
         console.log('Booking saved successfully with ID:', bookingId);
@@ -352,12 +467,7 @@ export default function Booking() {
           <Box className={classes.appointmentInfoRow}>
             {/* اسم الطبيب */}
             <Box className={classes.infoItem}>
-              <Box
-                component="img"
-                src={monitorIcon}
-                alt="تخصص"
-                className={classes.infoIcon}
-              />
+              <Box component="img" src={monitorIcon} alt="تخصص" className={classes.infoIcon} />
               <Typography variant="body2" className={classes.infoText}>
                 اسم الطبيب: {selectedDoctor ? selectedDoctor.name : 'غير محدد'}
               </Typography>
@@ -365,12 +475,7 @@ export default function Booking() {
 
             {/* موقع وجود الدليل العراقي */}
             <Box className={classes.infoItem}>
-              <Box
-                component="img"
-                src={translateIcon}
-                alt="مترجم"
-                className={classes.infoIcon}
-              />
+              <Box component="img" src={translateIcon} alt="مترجم" className={classes.infoIcon} />
               <Typography variant="body2" className={classes.infoText}>
                 موقع وجود الدليل العراقي: {city.translator}
               </Typography>
@@ -378,12 +483,7 @@ export default function Booking() {
 
             {/* تاريخ ووقت الموعد */}
             <Box className={classes.infoItem}>
-              <Box
-                component="img"
-                src={dateIcon}
-                alt="تاریخ"
-                className={classes.infoIcon}
-              />
+              <Box component="img" src={dateIcon} alt="تاریخ" className={classes.infoIcon} />
               <Typography variant="body2" className={classes.infoText}>
                 {formatAppointmentDateTime()}
               </Typography>
@@ -391,12 +491,7 @@ export default function Booking() {
 
             {/* رمز الموعد الخاص بك */}
             <Box className={classes.infoItem}>
-              <Box
-                component="img"
-                src={callBlackIcon}
-                alt="رمز"
-                className={classes.infoIcon}
-              />
+              <Box component="img" src={callBlackIcon} alt="رمز" className={classes.infoIcon} />
               <Typography variant="body2" className={classes.infoText}>
                 رمز الموعد الخاص بك: {toArabicNumerals(appointmentCode)}
               </Typography>
@@ -404,12 +499,7 @@ export default function Booking() {
 
             {/* رقم عيادة الاتصال */}
             <Box className={classes.infoItem}>
-              <Box
-                component="img"
-                src={userTickIcon}
-                alt="تماس"
-                className={classes.infoIcon}
-              />
+              <Box component="img" src={userTickIcon} alt="تماس" className={classes.infoIcon} />
               <Typography variant="body2" className={classes.infoText}>
                 رقم عيادة الاتصال:{' '}
                 <Box component="span" sx={{ direction: 'ltr', display: 'inline-block' }}>
@@ -421,7 +511,6 @@ export default function Booking() {
         </Box>
       </Paper>
 
-  
       <Typography variant="body1" className={classes.sectionTitle} sx={{ marginTop: 1.5 }}>
         أدخل بياناتك
       </Typography>
@@ -556,9 +645,7 @@ export default function Booking() {
                 )}
               </Box>
               {item.badge ? (
-                <Box className={classes.paymentBadge}>
-                  {item.badge}
-                </Box>
+                <Box className={classes.paymentBadge}>{item.badge}</Box>
               ) : item.image ? (
                 <Box
                   component="img"
@@ -572,21 +659,50 @@ export default function Booking() {
         ))}
       </Box>
 
-      <Button
-        variant="contained"
-        color="primary"
-        fullWidth
-        className={classes.submitButton}
-        onClick={handleSubmit}
-        disabled={isSubmitting}
-        startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : null}
-      >
-        {isSubmitting
-          ? ''
-          : selectedPayment === PaymentItems[PaymentItems.length - 1]
-          ? 'أكمل الحجز ( 3750 IQD)'
-          : 'أكمل الحجز ( 2500 IQD)'}
-      </Button>
+      <Box ref={buttonRef} className={classes.submitButtonContainer}>
+        <Button
+          variant="contained"
+          color="primary"
+          fullWidth
+          className={classes.submitButton}
+          onClick={handleSubmit}
+          disabled={isSubmitting || isButtonLoading}
+          startIcon={
+            isSubmitting || isButtonLoading ? <CircularProgress size={20} color="inherit" /> : null
+          }
+        >
+          {isSubmitting || isButtonLoading
+            ? ''
+            : selectedPayment === PaymentItems[PaymentItems.length - 1]
+              ? 'أكمل الحجز ( 3750 IQD)'
+              : 'أكمل الحجز ( 2500 IQD)'}
+        </Button>
+      </Box>
+
+      {/* دکمه Fixed برای موبایل */}
+      {isButtonSticky && isMobile && (
+        <Box className={classes.submitButtonFixed}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            className={classes.submitButton}
+            onClick={handleSubmit}
+            disabled={isSubmitting || isButtonLoading}
+            startIcon={
+              isSubmitting || isButtonLoading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : null
+            }
+          >
+            {isSubmitting || isButtonLoading
+              ? ''
+              : selectedPayment === PaymentItems[PaymentItems.length - 1]
+                ? 'أكمل الحجز ( 3750 IQD)'
+                : 'أكمل الحجز ( 2500 IQD)'}
+          </Button>
+        </Box>
+      )}
 
       {/* Dialog برای نمایش پیام موفقیت */}
       <Dialog
@@ -637,4 +753,3 @@ export default function Booking() {
     </Container>
   );
 }
-

@@ -48,10 +48,10 @@ const CustomSelect = ({
       ...provided,
       minHeight: '48px',
       borderRadius: '8px',
-      border: state.isFocused ? '2px solid #8B0EA1' : '2px solid #e0e0e0',
-      boxShadow: state.isFocused ? '0 0 0 3px rgba(139, 14, 161, 0.1)' : 'none',
+      border: state.isFocused ? '1px solid #8B0EA1' : '1px solid #e0e0e0',
+      boxShadow: 'none',
       '&:hover': {
-        border: state.isFocused ? '2px solid #8B0EA1' : '2px solid #b0b0b0',
+        border: state.isFocused ? '1px solid #8B0EA1' : '1px solid #b0b0b0',
       },
       backgroundColor: '#ffffff',
       direction: isRtl ? 'rtl' : 'ltr',
@@ -123,6 +123,7 @@ const CustomSelect = ({
   return (
     <Box className={classes.selectWrapper}>
       <Select
+        isSearchable={false}
         options={options}
         value={value}
         onChange={onChange}
@@ -131,6 +132,9 @@ const CustomSelect = ({
         styles={customStyles}
         isRtl={isRtl}
         icon={icon}
+        inputProps={{
+          readOnly: true,
+        }}
         {...otherProps}
       />
     </Box>

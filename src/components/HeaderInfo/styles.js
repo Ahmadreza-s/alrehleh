@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
-      maxWidth: 'clamp(220px, 50vw, 520px)',
+      maxWidth: 'clamp(220px, 65vw, 520px)',
     },
     locationIcon: {
       width: `${iconSize}px`,

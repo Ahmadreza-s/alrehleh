@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Container from '@mui/material/Container';
 import HeaderInfo from '@/components/HeaderInfo';
 import MainHeader from '@/components/MainHeader';
+import Loading from '@/components/Loading';
 import Home from '@/pages/Home';
 import Booking from '@/pages/Booking';
 
@@ -33,6 +34,7 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
+      <Loading />
       <HeaderInfo />
       <MainHeader />
       <Container>

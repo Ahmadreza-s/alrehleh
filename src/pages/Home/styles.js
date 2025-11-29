@@ -23,13 +23,17 @@ export const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      gap: theme.spacing(1),
+    },
   },
   filterRow: {
     display: 'flex',
     gap: theme.spacing(2),
     flexDirection: 'row',
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
+      flexDirection: 'column-reverse',
+      gap: theme.spacing(1),
     },
   },
   selectControl: {
@@ -51,6 +55,7 @@ export const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(3),
     borderRadius: '10px !important',
+    border: '1px solid #EDEDED',
     boxShadow: '0 18px 45px rgba(38, 0, 92, 0.12) !important',
     display: 'flex',
     flexDirection: 'column',
@@ -201,35 +206,36 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   paymentSection: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: 16,
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
     marginLeft: `calc(-1 * ${theme.spacing(2)})`,
     marginRight: `calc(-1 * ${theme.spacing(2)})`,
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
-    overflowX: 'auto',
-    overflowY: 'hidden',
-    whiteSpace: 'nowrap',
+    overflow: 'hidden',
     [theme.breakpoints.up('sm')]: {
       marginLeft: `calc(-1 * ${theme.spacing(3)})`,
       marginRight: `calc(-1 * ${theme.spacing(3)})`,
       paddingLeft: theme.spacing(3),
       paddingRight: theme.spacing(3),
+    },
+  },
+  paymentContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 16,
+    width: 'fit-content',
+    [theme.breakpoints.down('md')]: {
+      animation: '$paymentMarquee 80s linear infinite',
+      willChange: 'transform',
+    },
+    [theme.breakpoints.down('sm')]: {
+      animation: '$paymentMarquee 50s linear infinite',
+      willChange: 'transform',
+    },
+    [theme.breakpoints.up('md')]: {
       justifyContent: 'center',
-    },
-    '&::-webkit-scrollbar': {
-      height: 4,
-    },
-    '&::-webkit-scrollbar-track': {
-      background: 'transparent',
-    },
-    '&::-webkit-scrollbar-thumb': {
-      background: 'rgba(0, 0, 0, 0.2)',
-      borderRadius: 2,
+      width: '100%',
     },
   },
   paymentImage: {
@@ -237,5 +243,23 @@ export const useStyles = makeStyles((theme) => ({
     width: 'auto',
     objectFit: 'contain',
     flexShrink: 0,
+  },
+  '@keyframes paymentMarquee': {
+    '0%': {
+      transform: 'translateX(0)',
+    },
+    '100%': {
+      transform: 'translateX(-50%)',
+    },
+  },
+  appointmentSkeleton: {
+    padding: theme.spacing(3),
+    borderRadius: '10px !important',
+    border: '1px solid #EDEDED',
+    boxShadow: '0 18px 45px rgba(38, 0, 92, 0.12) !important',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1.5),
+    direction: 'rtl',
   },
 }));

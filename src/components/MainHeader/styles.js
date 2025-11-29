@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme) => {
     taglineText: {
       fontWeight: 600,
       whiteSpace: 'nowrap',
+      '@media (max-width: 480px)': {
+        display: 'none',
+      },
     },
     flagGroup: {
       display: 'flex',

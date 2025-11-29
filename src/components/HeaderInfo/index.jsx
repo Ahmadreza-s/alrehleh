@@ -1,7 +1,7 @@
-import React from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import { useTheme, useMediaQuery } from '@mui/material';
 
 import youtubeIcon from '@/assets/images/icons/youtube.svg';
 import instagramIcon from '@/assets/images/icons/instagram.svg';
@@ -14,6 +14,8 @@ import useStyles from './styles.js';
 
 export default function HeaderInfo() {
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Box component="header" className={classes.root}>
@@ -41,11 +43,17 @@ export default function HeaderInfo() {
             className={classes.socialIcon}
             style={{ cursor: 'pointer' }}
           >
-            <Box component="img" src={instagramIcon} alt="Instagram" className={classes.socialIcon} />
+            <Box
+              component="img"
+              src={instagramIcon}
+              alt="Instagram"
+              className={classes.socialIcon}
+            />
           </Box>
           <Box
             component="a"
-            href="#"
+            href="https://www.facebook.com/profile.php?id=61583856077444"
+            target="_blank"
             onClick={(e) => {
               e.preventDefault();
               trackEvent(ANALYTICS_EVENTS.CLICK_FACEBOOK_HEADER);
@@ -65,7 +73,11 @@ export default function HeaderInfo() {
           >
             <Box component="img" src={whatsappIcon} alt="WhatsApp" className={classes.socialIcon} />
             <Typography variant="body2" className={classes.whatsappText}>
-              <span dir="ltr">0098 912 505 6029</span>
+              {!isMobile && (
+                <>
+                  <span dir="ltr">0098 912 505 6029</span>
+                </>
+              )}
             </Typography>
           </Box>
         </Box>

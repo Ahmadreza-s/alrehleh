@@ -3,16 +3,16 @@ import { makeStyles } from '@mui/styles';
 export const useStyles = makeStyles((theme) => ({
   container: {
     direction: 'rtl',
-    padding: theme.spacing(3),
+    padding: `${theme.spacing(3)} 0 !important`,
   },
   card: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
     borderRadius: '12px !important',
     boxShadow: '0 18px 45px rgba(38, 0, 92, 0.12) !important',
     border: '1px solid rgba(0, 0, 0, 0.12)',
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(3),
+    gap: theme.spacing(2),
     [theme.breakpoints.up('md')]: {
       flexDirection: 'row',
     },
@@ -191,8 +191,37 @@ export const useStyles = makeStyles((theme) => ({
     zIndex: 2,
   },
   submitButton: {
-    marginTop: '16px !important',
     paddingTop: '16px !important',
     paddingBottom: '16px !important',
+  },
+  submitButtonContainer: {
+    marginTop: '16px !important',
+    width: '100%',
+  },
+  submitButtonFixed: {
+    display: 'none',
+    [theme.breakpoints.down('sm')]: {
+      display: 'block',
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      padding: theme.spacing(2),
+      backgroundColor: '#fff',
+      boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.1)',
+      zIndex: 1000,
+      direction: 'rtl',
+      maxWidth: '100vw',
+      boxSizing: 'border-box',
+      animation: '$slideUp 0.3s ease-out',
+    },
+  },
+  '@keyframes slideUp': {
+    from: {
+      transform: 'translateY(100%)',
+    },
+    to: {
+      transform: 'translateY(0)',
+    },
   },
 }));
