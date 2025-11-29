@@ -47,10 +47,16 @@ export default function SEO({ title, description, keywords, image, url, type = '
       updateMetaTag('keywords', keywords);
     }
 
-    // Update Open Graph tags
+    // Update Open Graph tags (Facebook, Telegram, etc.)
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
-    updateMetaTag('og:image', image || defaultImage, true);
+    const ogImage = image || defaultImage;
+    updateMetaTag('og:image', ogImage, true);
+    updateMetaTag('og:image:secure_url', ogImage, true);
+    updateMetaTag('og:image:type', 'image/png', true);
+    updateMetaTag('og:image:width', '1200', true);
+    updateMetaTag('og:image:height', '630', true);
+    updateMetaTag('og:image:alt', title || 'رحلة الشفا - منصة حجز مواعيد العلاج في إيران', true);
     updateMetaTag('og:url', currentUrl, true);
     updateMetaTag('og:type', type, true);
 
